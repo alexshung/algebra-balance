@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Algebra Balance Scale</title>
+<style>
+:root {
+  --bg: #FAFAFA; --surface: #FFFFFF; --text: #1A1A1A; --muted: #6B7280;
+  --accent: #3B82F6; --success: #10B981; --warning: #F59E0B; --error: #EF4444;
+  --var-color: #10B981; --const-color: #F59E0B; --neg-var: #065F46; --neg-const: #92400E;
+  --border: #D1D5DB; --radius: 8px; --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0F0F0F; --surface: #1A1A1A; --text: #F0F0F0; --muted: #9CA3AF;
+    --border: #374151;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 16px; }
+h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; }
+.subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 12px; text-align: center; }
+
+/* Input bar */
+.input-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; width: 100%; max-width: 700px; margin-bottom: 8px; }
+.input-bar input { flex: 1 1 200px; height: 40px; padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; background: var(--surface); color: var(--text); min-width: 0; }
+.input-bar input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59,130,246,.25); }
+.btn { height: 40px; padding: 0 16px; border: none; border-radius: 6px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all .15s ease; min-width: 44px; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #2563EB; }
+.btn-preset { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-preset:hover { border-color: var(--accent); color: var(--accent); }
+.btn-preset.active { border-color: var(--accent); background: rgba(59,130,246,.1); color: var(--accent); }
+.presets { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
+
+/* Current equation display */
+.current-eq { font-size: 1.1rem; font-weight: 600; text-align: center; margin-bottom: 12px; min-height: 28px; }
+
+/* Scale container */
+.scale-wrap { position: relative; width: 100%; max-width: 600px; height: 320px; margin-bottom: 16px; }
+
+/* Scale SVG styles */
+.scale-svg { width: 100%; height: 100%; }
+.beam { fill: #4B5563; transition: transform 0.5s ease; transform-origin: 300px 80px; }
+.fulcrum { fill: #6B7280; }
+.pan-line { stroke: #6B7280; stroke-width: 2; transition: all 0.5s ease; }
+.pan-base { fill: var(--surface); stroke: #6B7280; stroke-width: 1.5; rx: 6; transition: all 0.5s ease; }
+
+/* Object pans */
+.pan-objects { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: flex-end; position: absolute; transition: all 0.5s ease; }
+.pan-left-obj { left: 30px; width: 200px; bottom: 120px; }
+.pan-right-obj { right: 30px; width: 200px; bottom: 120px; }
+.obj { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: #fff; border-radius: 50%; transition: all .2s ease; }
+.obj.var-pos { background: var(--var-color); }
+.obj.var-neg { background: var(--neg-var); border: 2px dashed var(--var-color); }
+.obj.const-pos { background: var(--const-color); border-radius: 4px; }
+.obj.const-neg { background: var(--neg-const); border-radius: 4px; border: 2px dashed var(--const-color); }
+.obj.pop-in { animation: popIn .3s ease; }
+@keyframes popIn { 0% { transform: scale(0); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+/* Controls */
+.controls-row { display: flex; gap: 16px; justify-content: center; width: 100%; max-width: 600px; margin-bottom: 12px; }
+.side-controls { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+.side-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; text-align: center; }
+.ctrl-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px; }
+.ctrl-btn { width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); font-size: 1.2rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s ease; }
+.ctrl-btn:hover { border-color: var(--accent); color: var(--accent); }
+.ctrl-btn:active { transform: scale(0.95); }
+.ctrl-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: #fff; }
+.ctrl-icon.var { background: var(--var-color); border-radius: 50%; }
+.ctrl-icon.const { background: var(--const-color); border-radius: 4px; }
+.ctrl-count { font-size: 1rem; font-weight: 600; min-width: 30px; text-align: center; }
+
+/* Hint area */
+.hint-area { width: 100%; max-width: 600px; text-align: center; }
+.hint-toggle { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; font-size: 0.85rem; color: var(--muted); cursor: pointer; }
+.hint-toggle input { accent-color: var(--accent); width: 18px; height: 18px; }
+.hint-msg { background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.2); border-radius: var(--radius); padding: 10px 16px; font-size: 0.9rem; color: var(--accent); min-height: 0; overflow: hidden; transition: all .3s ease; }
+.hint-msg.hidden { padding: 0 16px; border-color: transparent; background: transparent; max-height: 0; opacity: 0; }
+
+/* Success overlay */
+.success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+.success-overlay.show { opacity: 1; pointer-events: all; }
+.success-card { background: var(--surface); border-radius: 16px; padding: 32px 40px; text-align: center; max-width: 400px; animation: bounceIn .5s ease; }
+.success-card h2 { font-size: 1.5rem; margin-bottom: 8px; }
+.success-card .solution { font-size: 2rem; font-weight: 700; color: var(--success); margin: 12px 0; }
+.success-card .btn { margin-top: 12px; }
+@keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+
+/* Confetti */
+.confetti-piece { position: fixed; width: 10px; height: 10px; z-index: 101; pointer-events: none; animation: confettiFall 2s ease forwards; }
+@keyframes confettiFall { 0% { opacity: 1; transform: translateY(0) rotate(0deg); } 100% { opacity: 0; transform: translateY(100vh) rotate(720deg); } }
+
+/* Responsive */
+@media (max-width: 639px) {
+  .controls-row { flex-direction: column; gap: 8px; }
+  .scale-wrap { height: 260px; }
+  .pan-left-obj, .pan-right-obj { width: 140px; }
+  .obj { width: 22px; height: 22px; font-size: 0.55rem; }
+  h1 { font-size: 1.25rem; }
+}
+</style>
+</head>
+<body>
+
+<h1>⚖️ Algebra Balance Scale</h1>
+<p class="subtitle">Learn to solve equations by keeping the scale balanced!</p>
+
+<div class="input-bar">
+  <input type="text" id="eqInput" placeholder="Enter equation: 3x + 5 = 10x + 12" aria-label="Equation input">
+  <button class="btn btn-primary" onclick="loadEquation()">Load</button>
+</div>
+
+<div class="presets">
+  <button class="btn btn-preset" onclick="loadPreset('easy',this)" data-eq="2x + 3 = x + 7">Easy</button>
+  <button class="btn btn-preset" onclick="loadPreset('medium',this)" data-eq="3x + 5 = 10x + 12">Medium</button>
+  <button class="btn btn-preset" onclick="loadPreset('hard',this)" data-eq="4x - 8 = -2x + 10">Hard</button>
+</div>
+
+<div class="current-eq" id="currentEq"></div>
+
+<div class="scale-wrap" id="scaleWrap">
+  <svg class="scale-svg" viewBox="0 0 600 320" id="scaleSvg">
+    <!-- Fulcrum triangle -->
+    <polygon class="fulcrum" points="300,280 270,320 330,320"/>
+    <!-- Beam -->
+    <g id="beamGroup" class="beam">
+      <rect x="60" y="74" width="480" height="12" rx="6"/>
+      <!-- Left pan strings -->
+      <line class="pan-line" id="lStr1" x1="110" y1="86" x2="110" y2="140"/>
+      <line class="pan-line" id="lStr2" x1="190" y1="86" x2="190" y2="140"/>
+      <!-- Right pan strings -->
+      <line class="pan-line" id="rStr1" x1="410" y1="86" x2="410" y2="140"/>
+      <line class="pan-line" id="rStr2" x1="490" y1="86" x2="490" y2="140"/>
+      <!-- Left pan -->
+      <rect class="pan-base" id="leftPan" x="90" y="140" width="120" height="16"/>
+      <!-- Right pan -->
+      <rect class="pan-base" id="rightPan" x="390" y="140" width="120" height="16"/>
+    </g>
+  </svg>
+  <div class="pan-objects pan-left-obj" id="leftObjects"></div>
+  <div class="pan-objects pan-right-obj" id="rightObjects"></div>
+</div>
+
+<div class="controls-row" id="controlsRow">
+  <div class="side-controls">
+    <div class="side-label">Left Side</div>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="modify('l','x',-1)">−</button>
+      <div class="ctrl-icon var">x</div>
+      <span class="ctrl-count" id="lxCount">0</span>
+      <button class="ctrl-btn" onclick="modify('l','x',1)">+</button>
+    </div>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="modify('l','c',-1)">−</button>
+      <div class="ctrl-icon const">1</div>
+      <span class="ctrl-count" id="lcCount">0</span>
+      <button class="ctrl-btn" onclick="modify('l','c',1)">+</button>
+    </div>
+  </div>
+  <div class="side-controls">
+    <div class="side-label">Right Side</div>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="modify('r','x',-1)">−</button>
+      <div class="ctrl-icon var">x</div>
+      <span class="ctrl-count" id="rxCount">0</span>
+      <button class="ctrl-btn" onclick="modify('r','x',1)">+</button>
+    </div>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="modify('r','c',-1)">−</button>
+      <div class="ctrl-icon const">1</div>
+      <span class="ctrl-count" id="rcCount">0</span>
+      <button class="ctrl-btn" onclick="modify('r','c',1)">+</button>
+    </div>
+  </div>
+</div>
+
+<div class="hint-area">
+  <label class="hint-toggle"><input type="checkbox" id="hintToggle" checked onchange="updateHint()"> Show Hints</label>
+  <div class="hint-msg hidden" id="hintMsg"></div>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <h2>🎉 You solved it!</h2>
+    <div class="solution" id="solutionText"></div>
+    <button class="btn btn-primary" onclick="closeSuccess()">Try Another</button>
+  </div>
+</div>
+<script>
+// State
+let state = { lx: 0, lc: 0, rx: 0, rc: 0 };
+let initial = { lx: 0, lc: 0, rx: 0, rc: 0 };
+let trueX = null; // the actual solution from the original equation
+let lastAction = null;
+let solved = false;
+
+// Solve the initial equation for x: (lx)*x + lc = (rx)*x + rc => x = (rc - lc) / (lx - rx)
+function solveForX(eq) {
+  const netX = eq.lx - eq.rx;
+  if (netX === 0) return null; // no unique solution
+  return (eq.rc - eq.lc) / netX;
+}
+
+// Evaluate one side of the equation given x: coeff*x + constant
+function evalSide(xCoeff, constant, x) {
+  return xCoeff * x + constant;
+}
+
+// Check if the current state represents a balanced equation using the true x value
+function isBalanced() {
+  if (trueX === null) {
+    // Original had no unique solution (0x = 0 or 0x = n)
+    // Check if current state is also identity or contradiction
+    const netX = state.lx - state.rx;
+    const netC = state.rc - state.lc;
+    return (netX === 0 && netC === 0);
+  }
+  const left = evalSide(state.lx, state.lc, trueX);
+  const right = evalSide(state.rx, state.rc, trueX);
+  return Math.abs(left - right) < 0.0001;
+}
+
+// Parse equation string like "3x + 5 = 10x + 12" or "3x+5=10x+12"
+function parseEquation(str) {
+  str = str.replace(/\s+/g, '');
+  const eqIdx = str.indexOf('=');
+  if (eqIdx === -1) return null;
+  const left = str.substring(0, eqIdx);
+  const right = str.substring(eqIdx + 1);
+  function parseSide(s) {
+    let xCoeff = 0, constant = 0;
+    // Regex to match terms like +3x, -x, +5, -12, x, 3x
+    const re = /([+-]?)(\d*)(x?)/g;
+    let m, found = false;
+    // Normalize: ensure starts with + or -
+    if (s.length > 0 && s[0] !== '+' && s[0] !== '-') s = '+' + s;
+    const terms = s.match(/[+-][^+-]+/g);
+    if (!terms) return null;
+    for (const term of terms) {
+      const t = term.trim();
+      if (t.includes('x')) {
+        const numPart = t.replace('x', '');
+        if (numPart === '+' || numPart === '') xCoeff += 1;
+        else if (numPart === '-') xCoeff -= 1;
+        else xCoeff += parseInt(numPart, 10);
+      } else {
+        constant += parseInt(t, 10);
+      }
+    }
+    return { x: xCoeff, c: constant };
+  }
+  const l = parseSide(left);
+  const r = parseSide(right);
+  if (!l || !r) return null;
+  return { lx: l.x, lc: l.c, rx: r.x, rc: r.c };
+}
+
+function formatSide(xc, cc) {
+  let parts = [];
+  if (xc !== 0) {
+    if (xc === 1) parts.push('x');
+    else if (xc === -1) parts.push('-x');
+    else parts.push(xc + 'x');
+  }
+  if (cc !== 0) {
+    if (parts.length > 0) {
+      parts.push(cc > 0 ? '+ ' + cc : '- ' + Math.abs(cc));
+    } else {
+      parts.push('' + cc);
+    }
+  }
+  if (parts.length === 0) parts.push('0');
+  return parts.join(' ');
+}
+
+function formatEquation() {
+  return formatSide(state.lx, state.lc) + ' = ' + formatSide(state.rx, state.rc);
+}
+
+function updateURL() {
+  const eq = formatEquation().replace(/\s+/g, '');
+  const url = new URL(window.location);
+  url.searchParams.set('eq', eq);
+  history.replaceState(null, '', url);
+}
+
+function showHint(msg) {
+  const hintEl = document.getElementById('hintMsg');
+  hintEl.textContent = msg;
+  hintEl.classList.remove('hidden');
+}
+
+function loadEquation() {
+  const input = document.getElementById('eqInput').value.trim();
+  if (!input) return;
+  const parsed = parseEquation(input);
+  if (!parsed) { showHint("Couldn't parse that equation. Try format: 3x + 5 = 10x + 12"); return; }
+  state = { ...parsed };
+  initial = { ...parsed };
+  trueX = solveForX(parsed);
+  solved = false;
+  lastAction = null;
+  document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+  closeSuccess();
+  render();
+}
+
+function loadPreset(level, btn) {
+  const eq = btn.getAttribute('data-eq');
+  document.getElementById('eqInput').value = eq;
+  document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadEquation();
+}
+
+function modify(side, type, delta) {
+  if (solved) return;
+  const key = (side === 'l' ? 'l' : 'r') + (type === 'x' ? 'x' : 'c');
+  state[key] += delta;
+  lastAction = { side, type, delta };
+  render();
+  checkSolved();
+}
+
+
+function render() {
+  // Update counts
+  document.getElementById('lxCount').textContent = state.lx;
+  document.getElementById('lcCount').textContent = state.lc;
+  document.getElementById('rxCount').textContent = state.rx;
+  document.getElementById('rcCount').textContent = state.rc;
+
+  // Update equation display
+  document.getElementById('currentEq').textContent = formatEquation();
+  updateURL();
+
+  // Render objects
+  renderObjects('leftObjects', state.lx, state.lc);
+  renderObjects('rightObjects', state.rx, state.rc);
+
+  // Scale tilt based on actual equation evaluation
+  const beam = document.getElementById('beamGroup');
+  let angle = 0;
+  if (trueX !== null) {
+    const leftVal = evalSide(state.lx, state.lc, trueX);
+    const rightVal = evalSide(state.rx, state.rc, trueX);
+    const diff = leftVal - rightVal;
+    if (Math.abs(diff) > 0.0001) {
+      angle = diff > 0 ? -Math.min(Math.abs(diff) * 2, 15) : Math.min(Math.abs(diff) * 2, 15);
+    }
+  } else {
+    // No unique x (0x=0 or 0x=n): compare constants
+    const diff = (state.lc) - (state.rc);
+    if (Math.abs(diff) > 0.0001) {
+      angle = diff > 0 ? -Math.min(Math.abs(diff) * 2, 15) : Math.min(Math.abs(diff) * 2, 15);
+    }
+  }
+  beam.style.transform = 'rotate(' + angle + 'deg)';
+
+  // Update object positions based on tilt (heavier side goes DOWN = lower bottom)
+  const leftObjs = document.getElementById('leftObjects');
+  const rightObjs = document.getElementById('rightObjects');
+  const baseBottom = 120;
+  const tiltOffset = Math.abs(angle) * 2.5;
+  if (angle < 0) {
+    // Left is heavier: left goes down (lower bottom), right goes up
+    leftObjs.style.bottom = (baseBottom - tiltOffset) + 'px';
+    rightObjs.style.bottom = (baseBottom + tiltOffset) + 'px';
+  } else if (angle > 0) {
+    // Right is heavier: right goes down, left goes up
+    leftObjs.style.bottom = (baseBottom + tiltOffset) + 'px';
+    rightObjs.style.bottom = (baseBottom - tiltOffset) + 'px';
+  } else {
+    leftObjs.style.bottom = baseBottom + 'px';
+    rightObjs.style.bottom = baseBottom + 'px';
+  }
+
+  // Hints
+  updateHint();
+}
+
+function renderObjects(containerId, xc, cc) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  // Variable objects
+  const xAbs = Math.min(Math.abs(xc), 20);
+  for (let i = 0; i < xAbs; i++) {
+    const obj = document.createElement('div');
+    obj.className = 'obj ' + (xc >= 0 ? 'var-pos' : 'var-neg') + ' pop-in';
+    obj.textContent = 'x';
+    obj.style.animationDelay = (i * 30) + 'ms';
+    el.appendChild(obj);
+  }
+  // Constant objects
+  const cAbs = Math.min(Math.abs(cc), 20);
+  for (let i = 0; i < cAbs; i++) {
+    const obj = document.createElement('div');
+    obj.className = 'obj ' + (cc >= 0 ? 'const-pos' : 'const-neg') + ' pop-in';
+    obj.textContent = '1';
+    obj.style.animationDelay = ((xAbs + i) * 30) + 'ms';
+    el.appendChild(obj);
+  }
+}
+
+function updateHint() {
+  const hintOn = document.getElementById('hintToggle').checked;
+  const hintEl = document.getElementById('hintMsg');
+  if (!hintOn || !lastAction) { hintEl.classList.add('hidden'); hintEl.textContent = ''; return; }
+
+  const balanced = isBalanced();
+
+  if (balanced) {
+    // Balanced — check if we can guide toward solving
+    if (state.lx !== 0 && state.rx !== 0) {
+      hintEl.textContent = '⚖️ Balanced! Try removing x from one side (and the same from the other) to isolate x.';
+    } else if ((state.lx !== 0 || state.rx !== 0) && state.lc !== 0 && state.rc !== 0) {
+      hintEl.textContent = '⚖️ Balanced! Now remove constants from the side with x (and from the other side too).';
+    } else if (state.lx === 1 && state.lc === 0 && state.rx === 0) {
+      hintEl.textContent = '⚖️ Almost there! You have x = ' + state.rc + '. The equation is solved!';
+    } else if (state.rx === 1 && state.rc === 0 && state.lx === 0) {
+      hintEl.textContent = '⚖️ Almost there! You have ' + state.lc + ' = x. The equation is solved!';
+    } else if ((state.lx !== 0 && state.rx === 0 && state.lc === 0) || (state.rx !== 0 && state.lx === 0 && state.rc === 0)) {
+      const coeff = state.lx !== 0 ? state.lx : state.rx;
+      if (Math.abs(coeff) === 1) {
+        hintEl.textContent = '⚖️ You\'ve isolated x! The equation is solved!';
+      } else {
+        hintEl.textContent = '⚖️ Getting close! You have ' + Math.abs(coeff) + ' x\'s — keep removing from both sides until you have just 1 x.';
+      }
+    } else {
+      hintEl.textContent = '⚖️ The scale is balanced. Keep simplifying!';
+    }
+    hintEl.classList.remove('hidden');
+  } else {
+    const a = lastAction;
+    const sideName = a.side === 'l' ? 'left' : 'right';
+    const typeName = a.type === 'x' ? 'variable (x)' : 'constant';
+    const action = a.delta > 0 ? 'added a ' + typeName + ' to' : 'removed a ' + typeName + ' from';
+    hintEl.textContent = '⚠️ Unbalanced! You ' + action + ' the ' + sideName + ' side. To keep the equation balanced, do the same to the ' + (sideName === 'left' ? 'right' : 'left') + ' side!';
+    hintEl.classList.remove('hidden');
+  }
+}
+
+function checkSolved() {
+  if (!isBalanced()) return;
+
+  // Only solved when exactly 1x (or -1x) on one side, constants only on the other
+  if (state.lx === 1 && state.rx === 0 && state.lc === 0 && state.rc !== 0) {
+    showSuccess('x = ' + state.rc);
+    return;
+  }
+  if (state.lx === -1 && state.rx === 0 && state.lc === 0 && state.rc !== 0) {
+    showSuccess('x = ' + (-state.rc));
+    return;
+  }
+  if (state.rx === 1 && state.lx === 0 && state.rc === 0 && state.lc !== 0) {
+    showSuccess('x = ' + state.lc);
+    return;
+  }
+  if (state.rx === -1 && state.lx === 0 && state.rc === 0 && state.lc !== 0) {
+    showSuccess('x = ' + (-state.lc));
+    return;
+  }
+
+  // All zero
+  if (state.lx === 0 && state.lc === 0 && state.rx === 0 && state.rc === 0) {
+    showSuccess('Infinite solutions! (0 = 0)'); return;
+  }
+  // No solution
+  if (state.lx === 0 && state.rx === 0 && state.lc !== state.rc) {
+    showSuccess('No solution! (' + state.lc + ' ≠ ' + state.rc + ')'); return;
+  }
+}
+
+function formatSolution(val) {
+  if (Number.isInteger(val)) return '' + val;
+  // Show as simplified fraction
+  // Find numerator and denominator from the state
+  const num = Math.round(val * 10000);
+  const den = 10000;
+  const g = gcd(Math.abs(num), den);
+  return (num / g) + '/' + (den / g);
+}
+
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+function showSuccess(text) {
+  solved = true;
+  document.getElementById('solutionText').textContent = text;
+  document.getElementById('successOverlay').classList.add('show');
+  launchConfetti();
+}
+
+function closeSuccess() {
+  document.getElementById('successOverlay').classList.remove('show');
+  solved = false;
+}
+
+function launchConfetti() {
+  const colors = ['#10B981','#F59E0B','#3B82F6','#EF4444','#8B5CF6','#EC4899'];
+  for (let i = 0; i < 40; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.top = '-20px';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    piece.style.width = (6 + Math.random() * 8) + 'px';
+    piece.style.height = (6 + Math.random() * 8) + 'px';
+    piece.style.animationDelay = (Math.random() * 0.5) + 's';
+    piece.style.animationDuration = (1.5 + Math.random()) + 's';
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 3000);
+  }
+}
+
+// Init from URL or default
+function init() {
+  const params = new URLSearchParams(window.location.search);
+  const eq = params.get('eq');
+  if (eq) {
+    document.getElementById('eqInput').value = eq.replace(/([+-])/g, ' $1 ').replace(/\s+/g, ' ').trim();
+    const parsed = parseEquation(eq);
+    if (parsed) {
+      state = { ...parsed };
+      initial = { ...parsed };
+      trueX = solveForX(parsed);
+    }
+  } else {
+    // Default equation
+    document.getElementById('eqInput').value = '3x + 5 = 10x + 12';
+    state = { lx: 3, lc: 5, rx: 10, rc: 12 };
+    initial = { ...state };
+    trueX = solveForX(state);
+  }
+  render();
+}
+
+// Enter key on input
+document.getElementById('eqInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') loadEquation();
+});
+
+init();
+</script>
+</body>
+</html>
