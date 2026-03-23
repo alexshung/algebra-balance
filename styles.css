@@ -43,10 +43,11 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; }
 .pan-base { fill: var(--surface); stroke: #6B7280; stroke-width: 1.5; rx: 6; transition: all 0.5s ease; }
 
 /* Object pans */
-.pan-objects { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: flex-end;
+.pan-objects { display: flex; flex-direction: column; flex-wrap: nowrap; gap: 4px;
+  align-items: center; justify-content: flex-end;
   position: absolute; transition: all 0.5s ease; }
-.pan-left-obj { left: 30px; width: 200px; bottom: 120px; }
-.pan-right-obj { right: 30px; width: 200px; bottom: 120px; }
+.pan-left-obj { left: 70px; width: 120px; bottom: 120px; }
+.pan-right-obj { right: 70px; width: 120px; bottom: 120px; }
 
 /* Objects on the scale */
 .obj { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
@@ -112,7 +113,7 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; }
 @media (max-width: 639px) {
   .controls-row { flex-direction: column; gap: 8px; }
   .scale-wrap { height: 260px; }
-  .pan-left-obj, .pan-right-obj { width: 140px; }
+  .pan-left-obj, .pan-right-obj { width: 100px; }
   .obj { width: 26px; height: 26px; font-size: 0.55rem; }
   .obj .neg-sign { font-size: 0.6rem; }
   h1 { font-size: 1.25rem; }
