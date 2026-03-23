@@ -51,13 +51,12 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; }
 /* Objects on the scale */
 .obj { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
   font-size: 0.65rem; font-weight: 700; color: #fff; border-radius: 50%; transition: all .2s ease;
-  position: relative; }
+  position: relative; gap: 0; }
 .obj.var-pos { background: var(--var-color); }
 .obj.var-neg { background: var(--neg-var); border: 2px dashed var(--var-color); }
 .obj.const-pos { background: var(--const-color); border-radius: 4px; }
 .obj.const-neg { background: var(--neg-const); border-radius: 4px; border: 2px dashed var(--const-color); }
-.obj .neg-sign { position: absolute; top: -6px; left: -4px; font-size: 14px; font-weight: 900;
-  color: var(--error); line-height: 1; text-shadow: 0 0 3px rgba(0,0,0,0.4); }
+.obj .neg-sign { font-size: 0.7rem; font-weight: 900; color: #fff; margin-right: -1px; }
 .obj.pop-in { animation: popIn .3s ease; }
 @keyframes popIn { 0% { transform: scale(0); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
 
@@ -115,6 +114,6 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; }
   .scale-wrap { height: 260px; }
   .pan-left-obj, .pan-right-obj { width: 140px; }
   .obj { width: 26px; height: 26px; font-size: 0.55rem; }
-  .obj .neg-sign { font-size: 12px; top: -5px; left: -3px; }
+  .obj .neg-sign { font-size: 0.6rem; }
   h1 { font-size: 1.25rem; }
 }
