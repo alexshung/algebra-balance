@@ -4,7 +4,7 @@
 function renderObjects(containerId, xc, cc) {
   const el = document.getElementById(containerId);
   el.innerHTML = '';
-  // Variable objects (spheres)
+  // Variable objects (x blocks) — go on bottom
   const xAbs = Math.min(Math.abs(xc), 20);
   const isNegX = xc < 0;
   for (let i = 0; i < xAbs; i++) {
@@ -17,11 +17,11 @@ function renderObjects(containerId, xc, cc) {
       neg.textContent = '−';
       obj.appendChild(neg);
     }
-    const label = document.createTextNode('x');
+    const label = document.createTextNode('X');
     obj.appendChild(label);
     el.appendChild(obj);
   }
-  // Constant objects (squares)
+  // Constant objects (1 blocks) — stack on top of x blocks
   const cAbs = Math.min(Math.abs(cc), 20);
   const isNegC = cc < 0;
   for (let i = 0; i < cAbs; i++) {
@@ -48,21 +48,22 @@ function updateScale() {
     const rightVal = evalSide(state.rx, state.rc, trueX);
     const diff = leftVal - rightVal;
     if (Math.abs(diff) > 0.0001) {
-      angle = diff > 0 ? -Math.min(Math.abs(diff) * 2, 15) : Math.min(Math.abs(diff) * 2, 15);
+      angle = diff > 0 ? -Math.min(Math.abs(diff) * 2, 12) : Math.min(Math.abs(diff) * 2, 12);
     }
   } else {
     const diff = state.lc - state.rc;
     if (Math.abs(diff) > 0.0001) {
-      angle = diff > 0 ? -Math.min(Math.abs(diff) * 2, 15) : Math.min(Math.abs(diff) * 2, 15);
+      angle = diff > 0 ? -Math.min(Math.abs(diff) * 2, 12) : Math.min(Math.abs(diff) * 2, 12);
     }
   }
   beam.style.transform = 'rotate(' + angle + 'deg)';
+  beam.style.transition = 'transform 0.5s ease';
 
-  // Position pans: heavier side goes down, objects sit on top of pan
+  // Position object containers: sit on top of shelves
   const leftObjs = document.getElementById('leftObjects');
   const rightObjs = document.getElementById('rightObjects');
-  const baseBottom = 65;
-  const tiltOffset = Math.abs(angle) * 2.5;
+  const baseBottom = 78;
+  const tiltOffset = Math.abs(angle) * 2.2;
   if (angle < 0) {
     leftObjs.style.bottom = (baseBottom - tiltOffset) + 'px';
     rightObjs.style.bottom = (baseBottom + tiltOffset) + 'px';

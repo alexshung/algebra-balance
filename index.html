@@ -25,16 +25,38 @@
 <div class="current-eq" id="currentEq"></div>
 
 <div class="scale-wrap" id="scaleWrap">
-  <svg class="scale-svg" viewBox="0 0 600 360" id="scaleSvg">
-    <polygon class="fulcrum" points="300,320 270,360 330,360"/>
-    <g id="beamGroup" class="beam">
-      <rect x="60" y="214" width="480" height="12" rx="6"/>
-      <line class="pan-line" id="lStr1" x1="110" y1="226" x2="110" y2="280"/>
-      <line class="pan-line" id="lStr2" x1="190" y1="226" x2="190" y2="280"/>
-      <line class="pan-line" id="rStr1" x1="410" y1="226" x2="410" y2="280"/>
-      <line class="pan-line" id="rStr2" x1="490" y1="226" x2="490" y2="280"/>
-      <rect class="pan-base" id="leftPan" x="90" y="280" width="120" height="16"/>
-      <rect class="pan-base" id="rightPan" x="390" y="280" width="120" height="16"/>
+  <svg class="scale-svg" viewBox="0 0 650 380" id="scaleSvg">
+    <!-- Fulcrum (golden triangle) -->
+    <defs>
+      <linearGradient id="fulcrumGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#E8C840"/>
+        <stop offset="50%" stop-color="#D4A828"/>
+        <stop offset="100%" stop-color="#B89020"/>
+      </linearGradient>
+      <linearGradient id="beamGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#D4A860"/>
+        <stop offset="40%" stop-color="#C89848"/>
+        <stop offset="100%" stop-color="#A07830"/>
+      </linearGradient>
+      <linearGradient id="shelfGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#B08040"/>
+        <stop offset="100%" stop-color="#8B6530"/>
+      </linearGradient>
+    </defs>
+    <polygon points="325,310 290,360 360,360" fill="url(#fulcrumGrad)" stroke="#A08020" stroke-width="2"/>
+    <g id="beamGroup" style="transform-origin: 325px 298px;">
+      <!-- Wooden beam -->
+      <rect x="50" y="290" width="550" height="16" rx="3" fill="url(#beamGrad)" stroke="#8B6530" stroke-width="1.5"/>
+      <!-- Beam wood grain lines -->
+      <line x1="70" y1="295" x2="600" y2="295" stroke="rgba(139,101,48,.3)" stroke-width="0.5"/>
+      <line x1="60" y1="300" x2="590" y2="300" stroke="rgba(139,101,48,.3)" stroke-width="0.5"/>
+      <!-- Left shelf/platform -->
+      <rect x="80" y="282" width="100" height="10" rx="2" fill="url(#shelfGrad)" stroke="#6B4520" stroke-width="1.5"/>
+      <!-- Right shelf/platform -->
+      <rect x="470" y="282" width="100" height="10" rx="2" fill="url(#shelfGrad)" stroke="#6B4520" stroke-width="1.5"/>
+      <!-- Support posts under shelves -->
+      <rect x="125" y="278" width="8" height="14" rx="1" fill="#9B7540" stroke="#6B4520" stroke-width="1"/>
+      <rect x="515" y="278" width="8" height="14" rx="1" fill="#9B7540" stroke="#6B4520" stroke-width="1"/>
     </g>
   </svg>
   <div class="pan-objects pan-left-obj" id="leftObjects"></div>
