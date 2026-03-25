@@ -1,5 +1,4 @@
 // ===== SCALE RENDERING =====
-// Handles visual objects on the scale pans and scale tilt
 
 function renderObjects(containerId, xc, cc) {
   const el = document.getElementById(containerId);
@@ -21,7 +20,7 @@ function renderObjects(containerId, xc, cc) {
     obj.appendChild(label);
     el.appendChild(obj);
   }
-  // Constant objects (1 blocks) — stack on top of x blocks
+  // Constant objects (1 blocks) — stack on top
   const cAbs = Math.min(Math.abs(cc), 20);
   const isNegC = cc < 0;
   for (let i = 0; i < cAbs; i++) {
@@ -59,11 +58,11 @@ function updateScale() {
   beam.style.transform = 'rotate(' + angle + 'deg)';
   beam.style.transition = 'transform 0.5s ease';
 
-  // Position object containers: sit on top of shelves
+  // Objects sit on top of the shelves — bottom offset from scale-wrap bottom
   const leftObjs = document.getElementById('leftObjects');
   const rightObjs = document.getElementById('rightObjects');
-  const baseBottom = 78;
-  const tiltOffset = Math.abs(angle) * 2.2;
+  const baseBottom = 82;
+  const tiltOffset = Math.abs(angle) * 1.8;
   if (angle < 0) {
     leftObjs.style.bottom = (baseBottom - tiltOffset) + 'px';
     rightObjs.style.bottom = (baseBottom + tiltOffset) + 'px';

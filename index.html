@@ -24,43 +24,46 @@
 
 <div class="current-eq" id="currentEq"></div>
 
-<div class="scale-wrap" id="scaleWrap">
-  <svg class="scale-svg" viewBox="0 0 650 380" id="scaleSvg">
-    <!-- Fulcrum (golden triangle) -->
-    <defs>
-      <linearGradient id="fulcrumGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#E8C840"/>
-        <stop offset="50%" stop-color="#D4A828"/>
-        <stop offset="100%" stop-color="#B89020"/>
-      </linearGradient>
-      <linearGradient id="beamGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#D4A860"/>
-        <stop offset="40%" stop-color="#C89848"/>
-        <stop offset="100%" stop-color="#A07830"/>
-      </linearGradient>
-      <linearGradient id="shelfGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#B08040"/>
-        <stop offset="100%" stop-color="#8B6530"/>
-      </linearGradient>
-    </defs>
-    <polygon points="325,310 290,360 360,360" fill="url(#fulcrumGrad)" stroke="#A08020" stroke-width="2"/>
-    <g id="beamGroup" style="transform-origin: 325px 298px;">
-      <!-- Wooden beam -->
-      <rect x="50" y="290" width="550" height="16" rx="3" fill="url(#beamGrad)" stroke="#8B6530" stroke-width="1.5"/>
-      <!-- Beam wood grain lines -->
-      <line x1="70" y1="295" x2="600" y2="295" stroke="rgba(139,101,48,.3)" stroke-width="0.5"/>
-      <line x1="60" y1="300" x2="590" y2="300" stroke="rgba(139,101,48,.3)" stroke-width="0.5"/>
-      <!-- Left shelf/platform -->
-      <rect x="80" y="282" width="100" height="10" rx="2" fill="url(#shelfGrad)" stroke="#6B4520" stroke-width="1.5"/>
-      <!-- Right shelf/platform -->
-      <rect x="470" y="282" width="100" height="10" rx="2" fill="url(#shelfGrad)" stroke="#6B4520" stroke-width="1.5"/>
-      <!-- Support posts under shelves -->
-      <rect x="125" y="278" width="8" height="14" rx="1" fill="#9B7540" stroke="#6B4520" stroke-width="1"/>
-      <rect x="515" y="278" width="8" height="14" rx="1" fill="#9B7540" stroke="#6B4520" stroke-width="1"/>
-    </g>
-  </svg>
-  <div class="pan-objects pan-left-obj" id="leftObjects"></div>
-  <div class="pan-objects pan-right-obj" id="rightObjects"></div>
+<!-- Scale area: fills available space, beam sits at the bottom, blocks grow upward -->
+<div class="scale-area">
+  <div class="scale-wrap">
+    <div class="pan-objects pan-left-obj" id="leftObjects"></div>
+    <div class="pan-objects pan-right-obj" id="rightObjects"></div>
+    <svg class="scale-svg" viewBox="0 0 650 100" preserveAspectRatio="xMidYMax meet" id="scaleSvg">
+      <defs>
+        <linearGradient id="fulcrumGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#E8C840"/>
+          <stop offset="50%" stop-color="#D4A828"/>
+          <stop offset="100%" stop-color="#B89020"/>
+        </linearGradient>
+        <linearGradient id="beamGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#D4A860"/>
+          <stop offset="40%" stop-color="#C89848"/>
+          <stop offset="100%" stop-color="#A07830"/>
+        </linearGradient>
+        <linearGradient id="shelfGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#B08040"/>
+          <stop offset="100%" stop-color="#8B6530"/>
+        </linearGradient>
+      </defs>
+      <!-- Fulcrum -->
+      <polygon points="325,48 290,95 360,95" fill="url(#fulcrumGrad)" stroke="#A08020" stroke-width="2"/>
+      <g id="beamGroup" style="transform-origin: 325px 36px;">
+        <!-- Wooden beam -->
+        <rect x="40" y="28" width="570" height="16" rx="3" fill="url(#beamGrad)" stroke="#8B6530" stroke-width="1.5"/>
+        <!-- Wood grain -->
+        <line x1="60" y1="33" x2="590" y2="33" stroke="rgba(139,101,48,.3)" stroke-width="0.5"/>
+        <line x1="50" y1="38" x2="600" y2="38" stroke="rgba(139,101,48,.3)" stroke-width="0.5"/>
+        <!-- Left shelf -->
+        <rect x="70" y="18" width="110" height="12" rx="2" fill="url(#shelfGrad)" stroke="#6B4520" stroke-width="1.5"/>
+        <!-- Right shelf -->
+        <rect x="470" y="18" width="110" height="12" rx="2" fill="url(#shelfGrad)" stroke="#6B4520" stroke-width="1.5"/>
+        <!-- Support posts -->
+        <rect x="120" y="16" width="8" height="14" rx="1" fill="#9B7540" stroke="#6B4520" stroke-width="1"/>
+        <rect x="520" y="16" width="8" height="14" rx="1" fill="#9B7540" stroke="#6B4520" stroke-width="1"/>
+      </g>
+    </svg>
+  </div>
 </div>
 
 <div class="controls-row" id="controlsRow">
