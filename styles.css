@@ -35,9 +35,9 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; }
 .current-eq { font-size: 1.1rem; font-weight: 600; text-align: center; margin-bottom: 12px; min-height: 28px; }
 
 /* Scale container */
-.scale-wrap { position: relative; width: 100%; max-width: 600px; height: 320px; margin-bottom: 16px; }
+.scale-wrap { position: relative; width: 100%; max-width: 600px; height: 360px; margin-bottom: 16px; }
 .scale-svg { width: 100%; height: 100%; }
-.beam { fill: #4B5563; transition: transform 0.5s ease; transform-origin: 300px 80px; }
+.beam { fill: #4B5563; transition: transform 0.5s ease; transform-origin: 300px 220px; }
 .fulcrum { fill: #6B7280; }
 .pan-line { stroke: #6B7280; stroke-width: 2; transition: all 0.5s ease; }
 .pan-base { fill: var(--surface); stroke: #6B7280; stroke-width: 1.5; rx: 6; transition: all 0.5s ease; }
@@ -46,8 +46,8 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; }
 .pan-objects { display: flex; flex-direction: column-reverse; flex-wrap: wrap-reverse;
   gap: 3px; justify-content: flex-start; align-items: center; align-content: center;
   position: absolute; transition: all 0.5s ease; }
-.pan-left-obj { left: 55px; width: 150px; bottom: 120px; }
-.pan-right-obj { right: 55px; width: 150px; bottom: 120px; }
+.pan-left-obj { left: 55px; width: 150px; bottom: 65px; }
+.pan-right-obj { right: 55px; width: 150px; bottom: 65px; }
 
 /* Objects on the scale */
 .obj { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
@@ -112,7 +112,7 @@ h1 { font-size: 1.5rem; margin-bottom: 4px; text-align: center; }
 /* Responsive */
 @media (max-width: 639px) {
   .controls-row { flex-direction: column; gap: 8px; }
-  .scale-wrap { height: 260px; }
+  .scale-wrap { height: 300px; }
   .pan-left-obj, .pan-right-obj { width: 120px; }
   .obj { width: 26px; height: 26px; font-size: 0.55rem; }
   .obj .neg-sign { font-size: 0.6rem; }

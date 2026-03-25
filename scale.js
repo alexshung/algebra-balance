@@ -61,7 +61,7 @@ function updateScale() {
   // Position pans: heavier side goes down, objects sit on top of pan
   const leftObjs = document.getElementById('leftObjects');
   const rightObjs = document.getElementById('rightObjects');
-  const baseBottom = 135;
+  const baseBottom = 65;
   const tiltOffset = Math.abs(angle) * 2.5;
   if (angle < 0) {
     leftObjs.style.bottom = (baseBottom - tiltOffset) + 'px';
