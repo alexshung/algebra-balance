@@ -58,10 +58,10 @@ function updateScale() {
   }
   beam.style.transform = 'rotate(' + angle + 'deg)';
 
-  // Position pans: heavier side goes down
+  // Position pans: heavier side goes down, objects sit on top of pan
   const leftObjs = document.getElementById('leftObjects');
   const rightObjs = document.getElementById('rightObjects');
-  const baseBottom = 120;
+  const baseBottom = 135;
   const tiltOffset = Math.abs(angle) * 2.5;
   if (angle < 0) {
     leftObjs.style.bottom = (baseBottom - tiltOffset) + 'px';
