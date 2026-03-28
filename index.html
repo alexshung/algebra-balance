@@ -24,12 +24,12 @@
 
 <div class="current-eq" id="currentEq"></div>
 
-<!-- Scale area: fills available space, beam sits at the bottom, blocks grow upward -->
-<div class="scale-area">
-  <div class="scale-wrap">
+<!-- Seesaw area: fills remaining space, beam at the very bottom -->
+<div class="seesaw-area">
+  <div class="seesaw-wrap">
     <div class="pan-objects pan-left-obj" id="leftObjects"></div>
     <div class="pan-objects pan-right-obj" id="rightObjects"></div>
-    <svg class="scale-svg" viewBox="0 0 650 100" preserveAspectRatio="xMidYMax meet" id="scaleSvg">
+    <svg class="seesaw-svg" viewBox="0 0 700 80" preserveAspectRatio="xMidYMax meet" id="scaleSvg" style="width:100%;height:100%;display:block;">
       <defs>
         <linearGradient id="fulcrumGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#E8C840"/>
@@ -46,21 +46,22 @@
           <stop offset="100%" stop-color="#8B6530"/>
         </linearGradient>
       </defs>
-      <!-- Fulcrum -->
-      <polygon points="325,48 290,95 360,95" fill="url(#fulcrumGrad)" stroke="#A08020" stroke-width="2"/>
-      <g id="beamGroup" style="transform-origin: 325px 36px;">
-        <!-- Wooden beam -->
-        <rect x="40" y="28" width="570" height="16" rx="3" fill="url(#beamGrad)" stroke="#8B6530" stroke-width="1.5"/>
-        <!-- Wood grain -->
-        <line x1="60" y1="33" x2="590" y2="33" stroke="rgba(139,101,48,.3)" stroke-width="0.5"/>
-        <line x1="50" y1="38" x2="600" y2="38" stroke="rgba(139,101,48,.3)" stroke-width="0.5"/>
-        <!-- Left shelf -->
-        <rect x="70" y="18" width="110" height="12" rx="2" fill="url(#shelfGrad)" stroke="#6B4520" stroke-width="1.5"/>
-        <!-- Right shelf -->
-        <rect x="470" y="18" width="110" height="12" rx="2" fill="url(#shelfGrad)" stroke="#6B4520" stroke-width="1.5"/>
-        <!-- Support posts -->
-        <rect x="120" y="16" width="8" height="14" rx="1" fill="#9B7540" stroke="#6B4520" stroke-width="1"/>
-        <rect x="520" y="16" width="8" height="14" rx="1" fill="#9B7540" stroke="#6B4520" stroke-width="1"/>
+      <!-- Fulcrum (trapezoid) -->
+      <polygon points="350,30 320,78 380,78" fill="url(#fulcrumGrad)" stroke="#A08020" stroke-width="2"/>
+      <!-- Beam group — rotates around fulcrum top -->
+      <g id="beamGroup" style="transform-origin: 350px 30px;">
+        <!-- Wooden plank -->
+        <rect x="30" y="22" width="640" height="16" rx="3" fill="url(#beamGrad)" stroke="#8B6530" stroke-width="1.5"/>
+        <!-- Wood grain lines -->
+        <line x1="50" y1="27" x2="650" y2="27" stroke="rgba(139,101,48,.25)" stroke-width="0.5"/>
+        <line x1="40" y1="32" x2="660" y2="32" stroke="rgba(139,101,48,.25)" stroke-width="0.5"/>
+        <!-- Left shelf (on top of beam) -->
+        <rect x="55" y="10" width="80" height="14" rx="2" fill="url(#shelfGrad)" stroke="#6B4520" stroke-width="1.5"/>
+        <!-- Right shelf (on top of beam) -->
+        <rect x="565" y="10" width="80" height="14" rx="2" fill="url(#shelfGrad)" stroke="#6B4520" stroke-width="1.5"/>
+        <!-- Small support posts under shelves -->
+        <rect x="91" y="8" width="8" height="16" rx="1" fill="#9B7540" stroke="#6B4520" stroke-width="1"/>
+        <rect x="601" y="8" width="8" height="16" rx="1" fill="#9B7540" stroke="#6B4520" stroke-width="1"/>
       </g>
     </svg>
   </div>

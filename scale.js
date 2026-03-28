@@ -3,7 +3,7 @@
 function renderObjects(containerId, xc, cc) {
   const el = document.getElementById(containerId);
   el.innerHTML = '';
-  // Variable objects (x blocks) — go on bottom
+  // Variable objects (x blocks) — go on bottom of stack
   const xAbs = Math.min(Math.abs(xc), 20);
   const isNegX = xc < 0;
   for (let i = 0; i < xAbs; i++) {
@@ -20,7 +20,7 @@ function renderObjects(containerId, xc, cc) {
     obj.appendChild(label);
     el.appendChild(obj);
   }
-  // Constant objects (1 blocks) — stack on top
+  // Constant objects (1 blocks) — stack on top of x blocks
   const cAbs = Math.min(Math.abs(cc), 20);
   const isNegC = cc < 0;
   for (let i = 0; i < cAbs; i++) {
@@ -47,23 +47,24 @@ function updateScale() {
     const rightVal = evalSide(state.rx, state.rc, trueX);
     const diff = leftVal - rightVal;
     if (Math.abs(diff) > 0.0001) {
-      angle = diff > 0 ? -Math.min(Math.abs(diff) * 2, 12) : Math.min(Math.abs(diff) * 2, 12);
+      angle = diff > 0 ? -Math.min(Math.abs(diff) * 1.8, 10) : Math.min(Math.abs(diff) * 1.8, 10);
     }
   } else {
     const diff = state.lc - state.rc;
     if (Math.abs(diff) > 0.0001) {
-      angle = diff > 0 ? -Math.min(Math.abs(diff) * 2, 12) : Math.min(Math.abs(diff) * 2, 12);
+      angle = diff > 0 ? -Math.min(Math.abs(diff) * 1.8, 10) : Math.min(Math.abs(diff) * 1.8, 10);
     }
   }
   beam.style.transform = 'rotate(' + angle + 'deg)';
   beam.style.transition = 'transform 0.5s ease';
 
-  // Objects sit on top of the shelves — bottom offset from scale-wrap bottom
+  // Objects sit on top of shelves — adjust vertical position with tilt
   const leftObjs = document.getElementById('leftObjects');
   const rightObjs = document.getElementById('rightObjects');
-  const baseBottom = 82;
-  const tiltOffset = Math.abs(angle) * 1.8;
+  const baseBottom = 62;
+  const tiltOffset = Math.abs(angle) * 1.6;
   if (angle < 0) {
+    // Left side heavier — left goes down, right goes up
     leftObjs.style.bottom = (baseBottom - tiltOffset) + 'px';
     rightObjs.style.bottom = (baseBottom + tiltOffset) + 'px';
   } else if (angle > 0) {
